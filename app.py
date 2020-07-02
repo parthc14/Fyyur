@@ -182,10 +182,10 @@ def show_venue(venue_id):
     past_shows = []
 
     for past_show in past_shows_query:
-        past_show.append({
+        past_shows.append({
             "artist_id": past_show.artist_id,
             "artist_name": past_show.artist.name,
-            "artist_image_link": past_show.artist_image_link,
+            "artist_image_link": past_show.venue.image_link,
             "start_time": past_show.start_time.strftime('%Y-%m-%d %H:%M:%S')
         })
 
@@ -215,8 +215,8 @@ def show_venue(venue_id):
         "image_link": venue.image_link,
         "past_shows": past_shows,
         "upcoming_shows": upcoming_shows,
-        "past_shows_count": len(past_shows_count),
-        "upcoming_shows_count": len(upcoming_shows_count)
+        "past_shows_count": len(past_shows),
+        "upcoming_shows_count": len(upcoming_shows)
     }
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
@@ -246,12 +246,7 @@ def create_venue_submission():
         image_link = form.image_link.data
         facebook_link = form.facebook_link.data
         website = form.website.data
-
-        if 'seeking_talent' in form.seeking_talent.data:
-            seeking_talent = True
-        else:
-            seeking_talent = False
-
+        seeking_talent = True if 'seeking_talent' in request.form else False
         seeking_talent_description = form.seeking_talent_description.data
 
         venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, image_link=image_link,
@@ -418,7 +413,7 @@ def edit_artist(artist_id):
         form.image_link.data = artist.image_link
         form.website.data = artist.website
         form.seeking_venue.data = artist.seeking_venue
-        form.seeking_description.data = artist.seeking_description
+        form.seeking_talent_description.data = artist.seeking_talent_description
 
     return render_template('forms/edit_artist.html', form=form, artist=artist)
 
@@ -470,7 +465,7 @@ def edit_venue(venue_id):
         form.image_link.data = venue.image_link
         form.website.data = venue.website
         form.seeking_talent.data = venue.seeking_talent
-        form.seeking_description.data = venue.seeking_description
+        form.seeking_talent_description.data = venue.seeking_talent_description
 
     # TODO: populate form with values from venue with ID <venue_id>
     return render_template('forms/edit_venue.html', form=form, venue=venue)
@@ -493,7 +488,7 @@ def edit_venue_submission(venue_id):
         venue.website = form.website.data
         venue.image_link = form.image_link.data
         venue.seeking_talent = form.seeking_talent.data
-        venue.seeking_description = form.seeking_description.data
+        venue.seeking_talent_description = form.seeking_talent_description.data
     except:
         error = True
         db.session.rollback()
@@ -563,8 +558,8 @@ def shows():
         data.append({
             "venue_id": show.venue_id,
             "venue_name": show.venue.name,
-            "artist_id": show.artist.artist_id,
-            "artist_image_link": show.artist.artist_image_link,
+            "artist_id": show.artist_id,
+            "artist_image_link": show.artist.image_link,
             "start_time": show.start_time.strftime('%Y-%m-%d %H:%M:%S')
         })
     # displays list of shows at /shows
@@ -591,7 +586,7 @@ def create_show_submission():
         show = Show(artist_id=artist_id, venue_id=venue_id,
                     start_time=start_time)
         db.session.add(show)
-        db.commit()
+        db.session.commit()
         flash('Show was successfully listed!')
     except:
         error = True

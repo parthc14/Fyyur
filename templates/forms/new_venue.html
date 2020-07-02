@@ -41,7 +41,12 @@ block content %}
       commas', autofocus = true) }}
     </div>
     <div class="form-group">
-      <label for="genres">Facebook Link</label>
+      <label for="image_link">Image</label>
+      {{ form.image_link(class_ = 'form-control', placeholder='http://',
+      autofocus = true) }}
+    </div>
+    <div class="form-group">
+      <label for="facebook_link">Facebook Link</label>
       {{ form.facebook_link(class_ = 'form-control', placeholder='http://',
       autofocus = true) }}
     </div>
@@ -49,6 +54,15 @@ block content %}
       <label for="website">Website</label>
       {{ form.website(class_ = 'form-control', placeholder='http://', autofocus
       = true) }}
+    </div>
+    <div class="form-group">
+      <label for="seeking_talent">Looking for artists?</label>
+      {{ form.seeking_talent(class_ = 'form-control', autofocus = true) }}
+    </div>
+    <div class="form-group">
+      <label for="seeking_talent_description">What are you looking for?</label>
+      {{ form.seeking_talent_description(class_ = 'form-control', autofocus =
+      true) }}
     </div>
     <input
       type="submit"
